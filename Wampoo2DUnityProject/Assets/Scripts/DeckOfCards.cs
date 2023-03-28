@@ -5,6 +5,7 @@ using UnityEngine;
 public class DeckOfCards : MonoBehaviour
 {
     public GameObject[] cards;
+    public Sprite backOfDeck;
 
     // Start is called before the first frame update
     void Start()

@@ -11,11 +11,16 @@ public class Card : MonoBehaviour
     public bool isJoker = false;
     public bool isFour = false;
     public bool isJack = false;
+    public bool isFlipped = false;
+    private Sprite faceUpSprite;
+    private Sprite backOfDeckSprite;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        faceUpSprite = gameObject.GetComponent<SpriteRenderer>().sprite;
+        backOfDeckSprite = gameObject.GetComponentInParent<DeckOfCards>().backOfDeck;
+        gameObject.GetComponent<SpriteRenderer>().sprite = backOfDeckSprite;
     }
 
     // Update is called once per frame
@@ -23,4 +28,21 @@ public class Card : MonoBehaviour
     {
         
     }
+
+    [ContextMenu("flip")]
+    public void flip()
+    {
+        if (isFlipped)
+        {
+            isFlipped = false;
+            gameObject.GetComponent<SpriteRenderer>().sprite = gameObject.GetComponentInParent<DeckOfCards>().backOfDeck;
+        }
+        else
+        {
+            isFlipped = true;
+            gameObject.GetComponent<SpriteRenderer>().sprite = faceUpSprite;
+        }
+    }
+
+
 }
