@@ -4,14 +4,15 @@ using UnityEngine;
 
 public class SpaceManager : MonoBehaviour
 {
-    public string locationID;
-    public Color spaceColour;
+    public int locationID;
+    public Color defaultColour;
     public GameObject marbleSpriteObject;
+    public int controlledByPlayer = 0;
 
     // Start is called before the first frame update
     void Start()
     {
-        setColour();
+        setColour(defaultColour);
     }
 
     // Update is called once per frame
@@ -21,12 +22,17 @@ public class SpaceManager : MonoBehaviour
     }
 
     [ContextMenu("setColor")]
-    public void setColour()
+    public void setColour(Color c)
     {
-        Color c = spaceColour;
         c.a = 255;
 
         marbleSpriteObject.GetComponent<SpriteRenderer>().color = c;
+
+    }
+
+    public void ResetToDefaultColor()
+    {
+        marbleSpriteObject.GetComponent<SpriteRenderer>().color = defaultColour;
 
     }
 }
