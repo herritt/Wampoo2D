@@ -10,7 +10,6 @@ public class GameManager : MonoBehaviour
     private float checkTime = 0.25f;
     private int index = 0;
 
-
     //real variables
     public Color color_p1 = Color.red;
     public Color color_p2 = Color.green;
@@ -25,12 +24,35 @@ public class GameManager : MonoBehaviour
 
 
     public GameObject[] spaces;
+    public Player[] players;
+    private DeckOfCards deck;
 
 
     // Start is called before the first frame update
     void Start()
     {
+        CreatePlayers();
         ResetBoard();
+        deck = GameObject.FindGameObjectWithTag("Deck").GetComponent<DeckOfCards>();
+        deck.ShuffleDeck();
+        deck.Deal(5, players);
+
+        players[0].OutPutHandToConsole();
+    }
+
+    private void CreatePlayers()
+    {
+        //hard coded for now
+
+        players = new Player[4];
+
+        players[0] = new Player("Bob", 1, color_p1, true);
+        players[1] = new Player("Tom", 2, color_p2);
+        players[2] = new Player("Eugene", 3, color_p3);
+        players[3] = new Player("Alice", 4, color_p4);
+
+        
+
     }
 
     // Update is called once per frame
@@ -112,19 +134,19 @@ public class GameManager : MonoBehaviour
             }
             else if (player == 1)
             {
-                spaceManager.setColour(color_p1);
+                spaceManager.setColour(players[0].playerColour);
             }
             else if (player == 2)
             {
-                spaceManager.setColour(color_p2);
+                spaceManager.setColour(players[1].playerColour);
             }
             else if (player == 3)
             {
-                spaceManager.setColour(color_p3);
+                spaceManager.setColour(players[2].playerColour);
             }
             else if (player == 4)
             {
-                spaceManager.setColour(color_p4);
+                spaceManager.setColour(players[3].playerColour);
             }
 
         }

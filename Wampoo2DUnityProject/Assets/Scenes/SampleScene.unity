@@ -5813,7 +5813,7 @@ GameObject:
   - component: {fileID: 779154787}
   m_Layer: 0
   m_Name: DeckOfCards
-  m_TagString: Untagged
+  m_TagString: Deck
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -13829,6 +13829,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66a9fd6d3974dda44ad79cefa8c472b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  color_p1: {r: 1, g: 0, b: 0, a: 1}
+  color_p2: {r: 0, g: 1, b: 0, a: 1}
+  color_p3: {r: 0, g: 0, b: 1, a: 1}
+  color_p4: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   spaces:
   - {fileID: 1406237554}
   - {fileID: 1487914017}

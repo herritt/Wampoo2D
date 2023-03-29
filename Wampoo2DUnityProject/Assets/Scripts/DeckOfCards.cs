@@ -4,14 +4,12 @@ using UnityEngine;
 
 public class DeckOfCards : MonoBehaviour
 {
-    public GameObject[] cards;
+    public List<GameObject> cards;
     public Sprite backOfDeck;
 
     // Start is called before the first frame update
     void Start()
     {
-        ShuffleDeck();
-        ShowTopCard();
     }
 
     // Update is called once per frame
@@ -22,9 +20,9 @@ public class DeckOfCards : MonoBehaviour
 
     public void ShuffleDeck()
     {
-        for (int i = 0; i < cards.Length - 1; i++)
+        for (int i = 0; i < cards.Count - 1; i++)
         {
-            int rnd = Random.Range(i, cards.Length);
+            int rnd = Random.Range(i, cards.Count);
             GameObject obj = cards[rnd];
             cards[rnd] = cards[i];
             cards[i] = obj;
@@ -43,8 +41,20 @@ public class DeckOfCards : MonoBehaviour
 
     }
 
-    public void Deal(int numCardsEach)
+    public void Deal(int numCardsEach, Player[] players)
     {
+        for (int i = 0; i < numCardsEach; i++)
+        {
+            //lets start by just sending some cards to
+            //the human player
+            SendCardsToPlayersHand(players[0], cards[i]);
+        }
+    }
 
+    public void SendCardsToPlayersHand(Player player, GameObject card)
+    {
+        GameObject topCardObject = cards[0];
+        cards.RemoveAt(0);
+        player.playersHand.Add(topCardObject.GetComponent<Card>());
     }
 }
