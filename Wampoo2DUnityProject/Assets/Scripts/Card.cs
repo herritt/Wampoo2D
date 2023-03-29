@@ -43,6 +43,13 @@ public class Card : MonoBehaviour
             gameObject.GetComponent<SpriteRenderer>().sprite = faceUpSprite;
         }
     }
+    
+
+    public void faceUp()
+    {
+        isFlipped = false;
+        flip();
+    }
 
 
 }

@@ -26,18 +26,20 @@ public class GameManager : MonoBehaviour
     public GameObject[] spaces;
     public Player[] players;
     private DeckOfCards deck;
+    public GameObject[] userHandLocations;
 
 
     // Start is called before the first frame update
     void Start()
     {
         CreatePlayers();
-        ResetBoard();
         deck = GameObject.FindGameObjectWithTag("Deck").GetComponent<DeckOfCards>();
         deck.ShuffleDeck();
         deck.Deal(5, players);
 
         players[0].OutPutHandToConsole();
+        ResetBoard();
+
     }
 
     private void CreatePlayers()
@@ -62,7 +64,7 @@ public class GameManager : MonoBehaviour
         {
             timer = 0;
             UpdateBoard();
-
+            
 
         }
         else
@@ -121,6 +123,53 @@ public class GameManager : MonoBehaviour
 
     // updates the board based on has a marble in each space
     private void UpdateBoard()
+    {
+        UpdateSpacesColours();
+        UpdateUsersHand();
+    }
+
+    public void UpdateUsersHand()
+    {
+        Player player = GetUser();
+
+        if (player != null)
+        {
+            List<Card> cards = player.playersHand;
+
+            int count = 0;
+            while (count < cards.Count)
+            {
+                
+                cards[count].gameObject.transform.position = userHandLocations[count].gameObject.transform.position;
+
+                
+
+                cards[count].faceUp();
+                count++;
+            }
+        }
+        
+    }
+
+    public Player GetUser()
+    {
+        foreach (Player p in players)
+        {
+            if (p.isUser)
+            {
+                return p;
+            }
+        }
+
+        Debug.Log("User Not Found!");
+
+        return null;
+    }
+
+
+
+
+    public void UpdateSpacesColours()
     {
         for (int i = 0; i < spaces.Length; i++)
         {
