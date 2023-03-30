@@ -5,12 +5,10 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    //for testing
+
     private float timer = 0;
     private float checkTime = 0.25f;
-    private int index = 0;
 
-    //real variables
     public Color color_p1 = Color.red;
     public Color color_p2 = Color.green;
     public Color color_p3 = Color.blue;
@@ -22,24 +20,24 @@ public class GameManager : MonoBehaviour
     private const int PLAYER_THREE_HOME = 300;
     private const int PLAYER_FOUR_HOME = 400;
 
-
     public GameObject[] spaces;
     public Player[] players;
     private DeckOfCards deck;
     public GameObject[] userHandLocations;
+    public GameObject boardObj;
+    private Board board;
 
 
     // Start is called before the first frame update
     void Start()
     {
+        board = boardObj.GetComponent<Board>();
         CreatePlayers();
         deck = GameObject.FindGameObjectWithTag("Deck").GetComponent<DeckOfCards>();
         deck.ShuffleDeck();
         deck.Deal(5, players);
 
-        players[0].OutPutHandToConsole();
-        ResetBoard();
-
+        board.ResetBoard();
     }
 
     private void CreatePlayers()
@@ -63,8 +61,9 @@ public class GameManager : MonoBehaviour
         if (timer > checkTime)
         {
             timer = 0;
-            UpdateBoard();
-            
+            board.UpdateBoard();
+            UpdateUsersHand();
+
 
         }
         else
@@ -76,57 +75,6 @@ public class GameManager : MonoBehaviour
     }
 
 
-
-
-
-
-    // this method resets the board to the starting configuration
-    private void ResetBoard()
-    {
-        for (int i = 0; i < spaces.Length; i++)
-        {
-            SpaceManager spaceManager = spaces[i].GetComponent<SpaceManager>();
-            spaceManager.controlledByPlayer = 0;
-
-        }
-
-        AssignPlayerToSpaces(1, PLAYER_ONE_HOME, PLAYER_ONE_HOME + NUM_HOME_SPACES);
-        AssignPlayerToSpaces(2, PLAYER_TWO_HOME, PLAYER_TWO_HOME + NUM_HOME_SPACES);
-        AssignPlayerToSpaces(3, PLAYER_THREE_HOME, PLAYER_THREE_HOME + NUM_HOME_SPACES);
-        AssignPlayerToSpaces(4, PLAYER_FOUR_HOME, PLAYER_FOUR_HOME + NUM_HOME_SPACES);
-
-    }
-
-    // assigns the player to control the spaces in the range.
-    public void AssignPlayerToSpaces(int player, int startID, int stopID)
-    {
-        if (stopID < startID) return;
-
-        for (int i = startID; i <= stopID; i++)
-        {
-            AssignPlayerToSpace(player, i);
-        }
-    }
-
-    // assigns the player to given space
-    public void AssignPlayerToSpace(int player, int locationID)
-    {
-        for (int i = 0; i < spaces.Length; i++)
-        {
-            SpaceManager spaceManager = spaces[i].GetComponent<SpaceManager>();
-            if (spaceManager.locationID == locationID)
-            {
-                spaceManager.controlledByPlayer = player;
-            }
-        }
-    }
-
-    // updates the board based on has a marble in each space
-    private void UpdateBoard()
-    {
-        UpdateSpacesColours();
-        UpdateUsersHand();
-    }
 
     public void UpdateUsersHand()
     {
@@ -167,70 +115,4 @@ public class GameManager : MonoBehaviour
     }
 
 
-
-
-    public void UpdateSpacesColours()
-    {
-        for (int i = 0; i < spaces.Length; i++)
-        {
-            SpaceManager spaceManager = spaces[i].GetComponent<SpaceManager>();
-            int player = spaceManager.controlledByPlayer;
-
-            if (player == 0)
-            {
-                spaceManager.ResetToDefaultColor();
-
-            }
-            else if (player == 1)
-            {
-                spaceManager.setColour(players[0].playerColour);
-            }
-            else if (player == 2)
-            {
-                spaceManager.setColour(players[1].playerColour);
-            }
-            else if (player == 3)
-            {
-                spaceManager.setColour(players[2].playerColour);
-            }
-            else if (player == 4)
-            {
-                spaceManager.setColour(players[3].playerColour);
-            }
-
-        }
-    }
-
-    // sets the space to the given colour
-    private void ColourSpaceAtIndex(int index, Color c)
-    {
-        c.a = 255;
-        for (int i = 0; i < spaces.Length; i++)
-        {
-            SpaceManager spaceManager = spaces[i].GetComponent<SpaceManager>();
-            if (spaceManager.locationID == index)
-            {
-                spaceManager.setColour(c);
-            }
-
-        }
-    }
-
-    //tests
-
-    // loops around the board assigning red to each space
-    public void RunAroundTheBoardTest()
-    {
-        if (timer < checkTime)
-        {
-            timer = timer + Time.deltaTime;
-        }
-        else
-        {
-            timer = 0;
-            ColourSpaceAtIndex(index, Color.red);
-            index++;
-            if (index > 95) index = 0;
-        }
-    }
 }
