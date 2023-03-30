@@ -18,17 +18,24 @@ public class Board : MonoBehaviour
 
 
     public GameObject[] spaces;
+    private SpaceManager[] spaceManagers;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        spaceManagers = new SpaceManager[spaces.Length];
+
+        for (int i = 0; i < spaces.Length; i++)
+        {
+            SpaceManager spaceManager = spaces[i].GetComponent<SpaceManager>();
+            spaceManagers[i] = spaceManager;
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void UpdateBoard()
@@ -39,9 +46,9 @@ public class Board : MonoBehaviour
     // this method resets the board to the starting configuration
     public void ResetBoard()
     {
-        for (int i = 0; i < spaces.Length; i++)
+        for (int i = 0; i < spaceManagers.Length; i++)
         {
-            SpaceManager spaceManager = spaces[i].GetComponent<SpaceManager>();
+            SpaceManager spaceManager = spaceManagers[i];
             spaceManager.controlledByPlayer = 0;
 
         }
@@ -68,7 +75,7 @@ public class Board : MonoBehaviour
     {
         for (int i = 0; i < spaces.Length; i++)
         {
-            SpaceManager spaceManager = spaces[i].GetComponent<SpaceManager>();
+            SpaceManager spaceManager = spaceManagers[i];
             if (spaceManager.locationID == locationID)
             {
                 spaceManager.controlledByPlayer = player;
@@ -80,7 +87,7 @@ public class Board : MonoBehaviour
     {
         for (int i = 0; i < spaces.Length; i++)
         {
-            SpaceManager spaceManager = spaces[i].GetComponent<SpaceManager>();
+            SpaceManager spaceManager = spaceManagers[i];
             int player = spaceManager.controlledByPlayer;
 
             if (player == 0)
@@ -106,5 +113,28 @@ public class Board : MonoBehaviour
             }
 
         }
+    }
+
+    public bool HasMarbleInStartRow(int player)
+    {
+        return NumberOfMarblesInStartRow(player) > 0;
+    }
+
+    public int NumberOfMarblesInStartRow(int player)
+    {
+        int count = 0;
+
+        for (int i = 0; i < spaceManagers.Length; i++)
+        {
+            SpaceManager spaceManager = spaceManagers[i];
+
+            if (spaceManager.isInStartRow && spaceManager.controlledByPlayer == player)
+            {
+                count++;
+            }
+        }
+
+
+        return count;
     }
 }

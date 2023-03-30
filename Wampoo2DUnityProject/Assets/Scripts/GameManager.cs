@@ -9,24 +9,13 @@ public class GameManager : MonoBehaviour
     private float timer = 0;
     private float checkTime = 0.25f;
 
-    public Color color_p1 = Color.red;
-    public Color color_p2 = Color.green;
-    public Color color_p3 = Color.blue;
-    public Color color_p4 = Color.yellow;
-
-    private const int NUM_HOME_SPACES = 4;
-    private const int PLAYER_ONE_HOME = 100;
-    private const int PLAYER_TWO_HOME = 200;
-    private const int PLAYER_THREE_HOME = 300;
-    private const int PLAYER_FOUR_HOME = 400;
-
     public GameObject[] spaces;
     public Player[] players;
     private DeckOfCards deck;
-    public GameObject[] userHandLocations;
     public GameObject boardObj;
     private Board board;
 
+    public User user;
 
     // Start is called before the first frame update
     void Start()
@@ -36,24 +25,10 @@ public class GameManager : MonoBehaviour
         deck = GameObject.FindGameObjectWithTag("Deck").GetComponent<DeckOfCards>();
         deck.ShuffleDeck();
         deck.Deal(5, players);
-
         board.ResetBoard();
     }
 
-    private void CreatePlayers()
-    {
-        //hard coded for now
 
-        players = new Player[4];
-
-        players[0] = new Player("Bob", 1, color_p1, true);
-        players[1] = new Player("Tom", 2, color_p2);
-        players[2] = new Player("Eugene", 3, color_p3);
-        players[3] = new Player("Alice", 4, color_p4);
-
-        
-
-    }
 
     // Update is called once per frame
     void Update()
@@ -62,8 +37,7 @@ public class GameManager : MonoBehaviour
         {
             timer = 0;
             board.UpdateBoard();
-            UpdateUsersHand();
-
+            user.UpdateUsersHand();
 
         }
         else
@@ -71,48 +45,24 @@ public class GameManager : MonoBehaviour
             timer = timer + Time.deltaTime;
         }
 
-        
+
     }
 
-
-
-    public void UpdateUsersHand()
+    private void CreatePlayers()
     {
-        Player player = GetUser();
+        //hard coded for now
 
-        if (player != null)
-        {
-            List<Card> cards = player.playersHand;
+        players = new Player[4];
 
-            int count = 0;
-            while (count < cards.Count)
-            {
-                
-                cards[count].gameObject.transform.position = userHandLocations[count].gameObject.transform.position;
+        players[0] = new Player("Bob", 1, board.color_p1, true);
 
-                
+        players[1] = new Player("Tom", 2, board.color_p2);
+        players[2] = new Player("Eugene", 3, board.color_p3);
+        players[3] = new Player("Alice", 4, board.color_p4);
 
-                cards[count].faceUp();
-                count++;
-            }
-        }
-        
+        //hard code player to user assignment
+        user.SetPlayer(players[0]);
+
     }
-
-    public Player GetUser()
-    {
-        foreach (Player p in players)
-        {
-            if (p.isUser)
-            {
-                return p;
-            }
-        }
-
-        Debug.Log("User Not Found!");
-
-        return null;
-    }
-
 
 }
