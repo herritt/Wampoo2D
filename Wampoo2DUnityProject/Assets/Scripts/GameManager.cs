@@ -10,7 +10,8 @@ public class GameManager : MonoBehaviour
     private float timer = 0;
     private float checkTime = 0.25f;
 
-    public GameObject[] spaces;
+    public GameObject[] spaceObjs;
+    public SpaceManager[] spaces;
     public Player[] players;
     private DeckOfCards deck;
     public GameObject boardObj;
@@ -22,6 +23,12 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        spaces = new SpaceManager[spaceObjs.Length];
+        for (int i = 0; i < spaceObjs.Length; i++)
+        {
+            spaces[i] = spaceObjs[i].GetComponent<SpaceManager>();
+        }
+
         board = boardObj.GetComponent<Board>();
         hud = gameObject.GetComponent<UIManager>();
 

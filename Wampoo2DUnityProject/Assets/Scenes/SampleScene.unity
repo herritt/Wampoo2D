@@ -16407,7 +16407,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66a9fd6d3974dda44ad79cefa8c472b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spaces:
+  spaceObjs:
   - {fileID: 1406237554}
   - {fileID: 1487914017}
   - {fileID: 1238952144}
@@ -16536,6 +16536,7 @@ MonoBehaviour:
   - {fileID: 775728783}
   - {fileID: 1360349241}
   - {fileID: 1252030402}
+  spaces: []
   boardObj: {fileID: 914968482}
   user: {fileID: 721039912}
 --- !u!114 &2044847604

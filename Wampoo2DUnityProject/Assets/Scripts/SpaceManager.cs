@@ -10,6 +10,7 @@ public class SpaceManager : MonoBehaviour,IPointerClickHandler
     public GameObject marbleSpriteObject;
     public int controlledByPlayer = 0;
     public bool isInStartRow = false;
+    public bool isSelected = false;
 
     private Vector3 selectedScale = new Vector3(1.2f, 1.2f, 1.2f);
     private Vector3 normalScale;
@@ -18,6 +19,7 @@ public class SpaceManager : MonoBehaviour,IPointerClickHandler
     void Start()
     {
         setColour(defaultColour);
+        normalScale = gameObject.transform.localScale;
     }
 
     // Update is called once per frame
@@ -53,12 +55,13 @@ public class SpaceManager : MonoBehaviour,IPointerClickHandler
 
     public void Selected()
     {
-
+        isSelected = true;
         gameObject.transform.localScale = selectedScale;
     }
 
     public void UnSelect()
     {
+        isSelected = false;
         gameObject.transform.localScale = normalScale;
     }
 

@@ -39,6 +39,9 @@ public class User : MonoBehaviour
 
     }
 
-    
+    public void HandleUserTurn(GameObject cardObj, GameObject spaceObj)
+    {
+
+    }
 
 }
