@@ -2134,6 +2134,10 @@ PrefabInstance:
       propertyPath: spaces
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 4963199692207903007, guid: 882b3f6ab6dea0e48a1391bba4ebd52c, type: 3}
+      propertyPath: isSpecialCard
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5170365448159577769, guid: 882b3f6ab6dea0e48a1391bba4ebd52c, type: 3}
       propertyPath: m_SpriteTilingProperty.pivot.x
       value: 0.5
@@ -3749,6 +3753,10 @@ PrefabInstance:
     - target: {fileID: 4963199692207903007, guid: 882b3f6ab6dea0e48a1391bba4ebd52c, type: 3}
       propertyPath: spaces
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4963199692207903007, guid: 882b3f6ab6dea0e48a1391bba4ebd52c, type: 3}
+      propertyPath: isSpecialCard
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5170365448159577769, guid: 882b3f6ab6dea0e48a1391bba4ebd52c, type: 3}
       propertyPath: m_SpriteTilingProperty.pivot.x
@@ -7205,6 +7213,10 @@ PrefabInstance:
     - target: {fileID: 4963199692207903007, guid: 882b3f6ab6dea0e48a1391bba4ebd52c, type: 3}
       propertyPath: spaces
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4963199692207903007, guid: 882b3f6ab6dea0e48a1391bba4ebd52c, type: 3}
+      propertyPath: isSpecialCard
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5170365448159577769, guid: 882b3f6ab6dea0e48a1391bba4ebd52c, type: 3}
       propertyPath: m_SpriteTilingProperty.pivot.x

@@ -83,6 +83,42 @@ public class GameManager : MonoBehaviour
     {
         deck.ForfeitHand(user.player);
     }
-    
 
+    
+    public void PlayMove(SpaceManager s, Card c)
+    {
+        Debug.Log("Playing move");
+        //check to see if it is just a straight up movement
+        if (!s.isInStartRow && !s.isInHomeRow && !c.isSpecialCard)
+        {
+            HandleMarbleInPlay(s, c);
+        }
+
+    }
+
+    // space is a normal space not in the home row or in the starter row
+    // card is just a movement 
+    private void HandleMarbleInPlay(SpaceManager s, Card c)
+    {
+        //set it back to no control because we are moving out of it
+        s.controlledByPlayer = 0;
+
+        int currentLocationId = s.locationID;
+        int newSpaceLocationId = currentLocationId + c.spaces;
+
+
+
+        //TODO: handle getting to home row
+
+        foreach (SpaceManager space in spaces)
+        {
+            if (space.locationID == newSpaceLocationId)
+            {
+                //TODO: update for AI players
+                space.controlledByPlayer = 1;
+            }
+        }
+
+        deck.DiscardCard(c, user.player);
+    }
 }

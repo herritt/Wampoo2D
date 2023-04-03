@@ -11,6 +11,7 @@ public class SpaceManager : MonoBehaviour,IPointerClickHandler
     public int controlledByPlayer = 0;
     public bool isInStartRow = false;
     public bool isSelected = false;
+    public bool isInHomeRow = false;
 
     private Vector3 selectedScale = new Vector3(1.2f, 1.2f, 1.2f);
     private Vector3 normalScale;

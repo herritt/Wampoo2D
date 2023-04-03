@@ -18,6 +18,7 @@ public class Card : MonoBehaviour,IPointerClickHandler
 
     private Vector3 selectedScale = new Vector3(1.2f, 1.2f, 1.2f);
     private Vector3 normalScale;
+    public bool isSelected = false;
 
     // Start is called before the first frame update
     void Start()
@@ -60,12 +61,13 @@ public class Card : MonoBehaviour,IPointerClickHandler
     public void Selected()
     {
 
-
+        isSelected = true;
         gameObject.transform.localScale = selectedScale;
     }
 
     public void UnSelect()
     {
+        isSelected = false;
         gameObject.transform.localScale = normalScale;
     }
 

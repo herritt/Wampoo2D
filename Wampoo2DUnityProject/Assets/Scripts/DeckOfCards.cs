@@ -6,10 +6,12 @@ public class DeckOfCards : MonoBehaviour
 {
     public List<GameObject> cards;
     public Sprite backOfDeck;
+    private Vector3 discardLocation;
 
     // Start is called before the first frame update
     void Start()
     {
+        discardLocation = GameObject.FindGameObjectWithTag("DiscardLocation").transform.position;
     }
 
     // Update is called once per frame
@@ -60,13 +62,20 @@ public class DeckOfCards : MonoBehaviour
 
     public void ForfeitHand(Player player)
     {
-        Vector3 discardLocation = GameObject.FindGameObjectWithTag("DiscardLocation").transform.position;
 
         foreach (Card card in player.playersHand)
         {
-            card.transform.position = discardLocation;
+            Debug.Log(discardLocation);
+            card.gameObject.transform.position = discardLocation;
         }
         
         player.playersHand.Clear();
+    }
+
+    public void DiscardCard(Card card, Player player)
+    {
+        player.RemoveCardFromPlayersHand(card);
+        card.gameObject.transform.position = discardLocation;
+        card.isSelected = false;
     }
 }

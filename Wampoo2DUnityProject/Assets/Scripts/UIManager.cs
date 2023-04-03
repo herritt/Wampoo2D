@@ -59,12 +59,12 @@ public class UIManager : MonoBehaviour
 
             card.Selected();
         }
+
+        TryMove();
     }
 
     public void OnMarbleSelected(GameObject marbleObject)
     {
-        Debug.Log(gameManager.spaces[0]);
-
         foreach (SpaceManager s in gameManager.spaces)
         {
             Debug.Log(s);
@@ -79,5 +79,31 @@ public class UIManager : MonoBehaviour
             space.Selected();
         }
 
+        TryMove();
+    }
+
+    public void TryMove()
+    {
+        foreach (SpaceManager s in gameManager.spaces)
+        {
+            if (s.isSelected)
+            {
+                List<Card> playersHand = gameManager.user.player.playersHand;
+
+                foreach (Card c in playersHand)
+                {
+                    if (c.isSelected)
+                    {
+                        gameManager.PlayMove(s, c);
+                        c.UnSelect();
+                        s.UnSelect();
+                        return;
+                    }
+                }
+                
+            }
+        }
+
+        
     }
 }

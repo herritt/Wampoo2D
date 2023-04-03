@@ -58,6 +58,9 @@ public class Board : MonoBehaviour
         AssignPlayerToSpaces(3, PLAYER_THREE_HOME, PLAYER_THREE_HOME + NUM_HOME_SPACES);
         AssignPlayerToSpaces(4, PLAYER_FOUR_HOME, PLAYER_FOUR_HOME + NUM_HOME_SPACES);
 
+        //for testing
+        AssignPlayerToSpace(1, 0);
+
     }
 
     public void AssignPlayerToSpaces(int player, int startID, int stopID)
