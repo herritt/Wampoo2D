@@ -61,4 +61,14 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public void OnMarbleSelected(GameObject marbleObject)
+    {
+        SpaceManager space = marbleObject.GetComponent<SpaceManager>();
+
+        if (space.IsControlledByUser())
+        {
+            space.Selected();
+        }
+
+    }
 }

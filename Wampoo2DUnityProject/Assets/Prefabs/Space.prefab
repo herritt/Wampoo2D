@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5640093872172111201}
   - component: {fileID: 5640093872172111200}
+  - component: {fileID: 9054372023776737812}
   m_Layer: 0
   m_Name: marbleSprite
   m_TagString: Untagged
@@ -82,6 +83,22 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!58 &9054372023776737812
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5640093872172111202}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.5
 --- !u!1 &5640093873549157002
 GameObject:
   m_ObjectHideFlags: 0
@@ -157,6 +174,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa8eb634d3db27a4980de9d37f0cfe28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  locationID: 
-  spaceColour: {r: 0, g: 0, b: 0, a: 0}
+  locationID: 0
+  defaultColour: {r: 0, g: 0, b: 0, a: 0}
   marbleSpriteObject: {fileID: 5640093872172111202}
+  controlledByPlayer: 0
+  isInStartRow: 0
