@@ -57,4 +57,16 @@ public class DeckOfCards : MonoBehaviour
         cards.RemoveAt(0);
         player.playersHand.Add(topCardObject.GetComponent<Card>());
     }
+
+    public void ForfeitHand(Player player)
+    {
+        Vector3 discardLocation = GameObject.FindGameObjectWithTag("DiscardLocation").transform.position;
+
+        foreach (Card card in player.playersHand)
+        {
+            card.transform.position = discardLocation;
+        }
+        
+        player.playersHand.Clear();
+    }
 }

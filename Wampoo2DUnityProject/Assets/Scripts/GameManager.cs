@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -16,18 +17,25 @@ public class GameManager : MonoBehaviour
     private Board board;
 
     public User user;
+    private UIManager hud;
 
     // Start is called before the first frame update
     void Start()
     {
         board = boardObj.GetComponent<Board>();
+        hud = gameObject.GetComponent<UIManager>();
+
         CreatePlayers();
         deck = GameObject.FindGameObjectWithTag("Deck").GetComponent<DeckOfCards>();
         deck.ShuffleDeck();
         deck.Deal(5, players);
         board.ResetBoard();
-    }
 
+
+        // hard coded first player for now
+        hud.TellUserItsTheirTurn(0);
+
+    }
 
 
     // Update is called once per frame
@@ -44,7 +52,6 @@ public class GameManager : MonoBehaviour
         {
             timer = timer + Time.deltaTime;
         }
-
 
     }
 
@@ -64,5 +71,11 @@ public class GameManager : MonoBehaviour
         user.SetPlayer(players[0]);
 
     }
+
+    public void OnForfeitHand()
+    {
+        deck.ForfeitHand(user.player);
+    }
+    
 
 }
