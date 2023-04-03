@@ -7,6 +7,12 @@ public class User : MonoBehaviour
     public Player player;
     public GameObject[] userHandLocations;
 
+    public void Update()
+    {
+        
+
+    }
+
     public void SetPlayer(Player player)
     {
         this.player = player;
@@ -32,5 +38,7 @@ public class User : MonoBehaviour
         }
 
     }
+
+    
 
 }

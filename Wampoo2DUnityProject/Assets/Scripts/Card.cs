@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class Card : MonoBehaviour
+public class Card : MonoBehaviour,IPointerClickHandler
 {
     public int spaces = 0;
     public bool isSpecialCard = false;
@@ -15,12 +16,17 @@ public class Card : MonoBehaviour
     private Sprite faceUpSprite;
     private Sprite backOfDeckSprite;
 
+    private Vector3 selectedScale = new Vector3(1.2f, 1.2f, 1.2f);
+    private Vector3 normalScale;
+
     // Start is called before the first frame update
     void Start()
     {
         faceUpSprite = gameObject.GetComponent<SpriteRenderer>().sprite;
         backOfDeckSprite = gameObject.GetComponentInParent<DeckOfCards>().backOfDeck;
         gameObject.GetComponent<SpriteRenderer>().sprite = backOfDeckSprite;
+
+        normalScale = gameObject.transform.localScale;
     }
 
     // Update is called once per frame
@@ -49,6 +55,27 @@ public class Card : MonoBehaviour
     {
         isFlipped = false;
         flip();
+    }
+
+    public void Selected()
+    {
+
+
+        gameObject.transform.localScale = selectedScale;
+    }
+
+    public void UnSelect()
+    {
+        gameObject.transform.localScale = normalScale;
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        GameObject managers = GameObject.FindGameObjectWithTag("Manager");
+
+        UIManager uiManager = managers.GetComponent<UIManager>();
+
+        uiManager.OnCardSelected(gameObject);
     }
 
 

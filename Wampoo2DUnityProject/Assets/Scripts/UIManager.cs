@@ -44,4 +44,21 @@ public class UIManager : MonoBehaviour
         text.enabled = false;
     }
 
+    public void OnCardSelected(GameObject cardObj)
+    {
+        Card card = cardObj.GetComponent<Card>();
+
+        List<Card> playersHand = gameManager.user.player.playersHand;
+
+        if (playersHand.Contains(card))
+        {
+            foreach (Card c in playersHand)
+            {
+                c.UnSelect();
+            }
+
+            card.Selected();
+        }
+    }
+
 }
