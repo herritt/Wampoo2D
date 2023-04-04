@@ -11,6 +11,12 @@ public class Board : MonoBehaviour
     private const int PLAYER_THREE_HOME = 300;
     private const int PLAYER_FOUR_HOME = 400;
 
+    private const int PLAYER_ONE_START = 0;
+    private const int PLAYER_TWO_START = 24;
+    private const int PLAYER_THREE_START = 48;
+    private const int PLAYER_FOUR_START = 64;
+
+
     public Color color_p1 = Color.red;
     public Color color_p2 = Color.green;
     public Color color_p3 = Color.blue;
@@ -59,7 +65,7 @@ public class Board : MonoBehaviour
         AssignPlayerToSpaces(4, PLAYER_FOUR_HOME, PLAYER_FOUR_HOME + NUM_HOME_SPACES);
 
         //for testing
-        AssignPlayerToSpace(1, 0);
+        //AssignPlayerToSpace(1, 0);
 
     }
 
@@ -139,5 +145,60 @@ public class Board : MonoBehaviour
 
 
         return count;
+    }
+
+    public SpaceManager GetStartSpaceForPlayer(int player)
+    {
+        int locationID = GetLocationIdOfStartPosition(player);
+
+        SpaceManager space = GetSpaceAtLocationID(locationID);
+        
+        return space;
+    }
+    public bool HasMarbleInStartPosition(int player)
+    {
+        SpaceManager space = GetStartSpaceForPlayer(player);
+
+        if (space.controlledByPlayer == player)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public int GetLocationIdOfStartPosition(int player)
+    {
+        if (player == 1)
+        {
+            return PLAYER_ONE_START;
+        }
+        else if (player == 2)
+        {
+            return PLAYER_TWO_START;
+        }
+        else if (player == 3)
+        {
+            return PLAYER_THREE_START;
+        }
+        else if (player == 4)
+        {
+            return PLAYER_FOUR_START;
+        }
+
+        return -1;
+    }
+
+    public SpaceManager GetSpaceAtLocationID(int locationID)
+    {
+        for (int i = 0; i < spaces.Length; i++)
+        {
+            if (spaceManagers[i].locationID == locationID)
+            {
+                return spaceManagers[i];
+            }
+        }
+
+        return null;
     }
 }

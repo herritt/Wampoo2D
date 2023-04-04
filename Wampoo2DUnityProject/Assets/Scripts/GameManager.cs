@@ -82,23 +82,90 @@ public class GameManager : MonoBehaviour
     public void OnForfeitHand()
     {
         deck.ForfeitHand(user.player);
+        deck.Deal(4, players);
     }
 
-    
-    public void PlayMove(SpaceManager s, Card c)
+
+    public void PlayMove(SpaceManager s, Card c, int player)
     {
-        Debug.Log("Playing move");
         //check to see if it is just a straight up movement
         if (!s.isInStartRow && !s.isInHomeRow && !c.isSpecialCard)
         {
-            HandleMarbleInPlay(s, c);
+            HandleNonSpecialMovement(s, c, player);
         }
+        else if (s.isInStartRow)
+        {
+            if (c.isStarterCard)
+            {
+                HandleStarterRow(s, c, player);
+            }
+            else
+            {
+                InValidMove(s, c);
+                return;
+            }
+        }
+        else if (s.isInHomeRow)
+        {
+            //TODO
+        }
+        else if (c.isFour)
+        {
+            HandleFourCard(s, c, player);
+        }
+        else
+        {
+            InValidMove(s, c);
+            return;
+        }
+
+        EndTurn();
 
     }
 
+    private void InValidMove(SpaceManager s, Card c)
+    {
+        s.UnSelect();
+        c.UnSelect();
+    }
+
+    private void HandleStarterRow(SpaceManager s, Card c, int player)
+    {
+        if (board.HasMarbleInStartPosition(player))
+        {
+            InValidMove(s, c);
+        }
+        else
+        {
+            s.controlledByPlayer = 0;
+            deck.DiscardCard(c, user.player);
+            SpaceManager space = board.GetStartSpaceForPlayer(player);
+            space.controlledByPlayer = player;
+            
+        }
+    }
+
+    private void HandleFourCard(SpaceManager s, Card c, int player)
+    {
+        s.controlledByPlayer = 0;
+
+        int currentLocationId = s.locationID;
+        int newSpaceLocationId = currentLocationId - 4;
+        //TODO: Handle moving backwards from 0 position
+
+        //TODO: handle knocking other player off
+
+        board.AssignPlayerToSpace(player, newSpaceLocationId);
+
+
+
+    }
+
+
+
     // space is a normal space not in the home row or in the starter row
     // card is just a movement 
-    private void HandleMarbleInPlay(SpaceManager s, Card c)
+    private void HandleNonSpecialMovement(SpaceManager s, Card c, int player)
     {
         //set it back to no control because we are moving out of it
         s.controlledByPlayer = 0;
@@ -109,16 +176,19 @@ public class GameManager : MonoBehaviour
 
 
         //TODO: handle getting to home row
+        //TODO: handle knocking other player off
+        //TODO: handle blockers (start marbles)
+        //TODO: update for AI players
+        board.AssignPlayerToSpace(player, newSpaceLocationId);
 
-        foreach (SpaceManager space in spaces)
-        {
-            if (space.locationID == newSpaceLocationId)
-            {
-                //TODO: update for AI players
-                space.controlledByPlayer = 1;
-            }
-        }
 
         deck.DiscardCard(c, user.player);
+    }
+
+
+
+    public void EndTurn()
+    {
+
     }
 }

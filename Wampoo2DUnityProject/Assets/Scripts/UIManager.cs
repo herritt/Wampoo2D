@@ -94,7 +94,7 @@ public class UIManager : MonoBehaviour
                 {
                     if (c.isSelected)
                     {
-                        gameManager.PlayMove(s, c);
+                        gameManager.PlayMove(s, c, 1);
                         c.UnSelect();
                         s.UnSelect();
                         return;
