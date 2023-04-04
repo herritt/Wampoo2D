@@ -148,7 +148,7 @@ public class GameManager : MonoBehaviour
     // this is not handling getting into the home row
     private bool HandleHomeRow(SpaceManager s, Card c, int player)
     {
-        
+
         //need to consider if there is a marble already in the spot in the home row
         if (CanMakeMoveinHomeRow(s.locationID, c.spaces, player))
         {
@@ -260,7 +260,7 @@ public class GameManager : MonoBehaviour
         int currentLocationId = s.locationID;
         int newSpaceLocationId = currentLocationId + c.spaces;
 
-        if (EnteringHomeRow(s,c,player))
+        if (EnteringHomeRow(s, c, player))
         {
             int endLocationId = board.GetLocationIdOfEndPosition(player);
 
@@ -285,11 +285,16 @@ public class GameManager : MonoBehaviour
                 newSpaceLocationId = homeLocation + spacesToMove;
             }
         }
+        else if (IsMoveBlockedByStartingMarble(s, c, player))
+        {
+            Debug.Log("Blocked by Start Marble");
+            return;
+        }
+
 
         //set it back to no control because we are moving out of it
         s.controlledByPlayer = NO_ONE;
 
-        //TODO: handle knocking other player off
         SpaceManager newSpace = board.GetSpaceAtLocationID(newSpaceLocationId);
 
         if (newSpace.controlledByPlayer > 0)
@@ -299,13 +304,52 @@ public class GameManager : MonoBehaviour
         }
 
 
-        //TODO: handle blockers (start marbles)
         //TODO: update for AI players
         board.AssignPlayerToSpace(player, newSpaceLocationId);
 
         deck.DiscardCard(c, user.player);
 
         EndTurn();
+    }
+
+    private bool IsMoveBlockedByStartingMarble(SpaceManager s, Card c, int player)
+    {
+
+        //loop through player 1 to 4
+        for (int i = 1; i <= 4; i++)
+        {
+            //for every other player
+            if (i != player)
+            {
+                //check if this player is blocking our player
+                if (board.HasMarbleInStartPosition(i))
+                {
+                    // has a marble so could possibly be blocking
+                    int start = s.locationID;
+                    int finish = s.locationID + c.spaces;
+
+                    //check for player #1 edge case
+                    if (finish < start)
+                    {
+                        //passing past #1
+                        if (board.HasMarbleInStartPosition(1))
+                        {
+                            // blocked by marble in player 1 start position
+                            return true;
+                        }
+                    }
+
+                    int startMarbleIndex = board.GetLocationIdOfStartPosition(i);
+
+                    if (start < startMarbleIndex && startMarbleIndex < finish)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     private bool EnteringHomeRow(SpaceManager s, Card c, int player)
