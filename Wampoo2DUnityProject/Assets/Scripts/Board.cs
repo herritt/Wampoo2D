@@ -20,8 +20,12 @@ public class Board : MonoBehaviour
     private const int PLAYER_ONE_START = 0;
     private const int PLAYER_TWO_START = 24;
     private const int PLAYER_THREE_START = 48;
-    private const int PLAYER_FOUR_START = 64;
+    private const int PLAYER_FOUR_START = 72;
 
+    private const int PLAYER_ONE_END = 92;
+    private const int PLAYER_TWO_END = 20;
+    private const int PLAYER_THREE_END = 44;
+    private const int PLAYER_FOUR_END = 68;
 
     public Color color_p1 = Color.red;
     public Color color_p2 = Color.green;
@@ -71,8 +75,8 @@ public class Board : MonoBehaviour
         AssignPlayerToSpaces(4, PLAYER_FOUR_STARTROW, PLAYER_FOUR_STARTROW + NUM_HOME_SPACES);
 
         //for testing
+        AssignPlayerToSpace(1, 90);
         AssignPlayerToSpace(1, 1000);
-        AssignPlayerToSpace(1, 1002);
 
     }
 
@@ -174,6 +178,28 @@ public class Board : MonoBehaviour
         return false;
     }
 
+    public int GetLocationIdOfHomePosition(int player)
+    {
+        if (player == 1)
+        {
+            return PLAYER_ONE_HOME_ROW;
+        }
+        else if (player == 2)
+        {
+            return PLAYER_TWO_HOME_ROW;
+        }
+        else if (player == 3)
+        {
+            return PLAYER_THREE_HOME_ROW;
+        }
+        else if (player == 4)
+        {
+            return PLAYER_FOUR_HOME_ROW;
+        }
+
+        return -1;
+    }
+
     public int GetLocationIdOfStartPosition(int player)
     {
         if (player == 1)
@@ -191,6 +217,28 @@ public class Board : MonoBehaviour
         else if (player == 4)
         {
             return PLAYER_FOUR_START;
+        }
+
+        return -1;
+    }
+
+    public int GetLocationIdOfEndPosition(int player)
+    {
+        if (player == 1)
+        {
+            return PLAYER_ONE_END;
+        }
+        else if (player == 2)
+        {
+            return PLAYER_TWO_END;
+        }
+        else if (player == 3)
+        {
+            return PLAYER_THREE_END;
+        }
+        else if (player == 4)
+        {
+            return PLAYER_FOUR_END;
         }
 
         return -1;
