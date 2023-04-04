@@ -6,10 +6,16 @@ public class Board : MonoBehaviour
 {
 
     private const int NUM_HOME_SPACES = 4;
-    private const int PLAYER_ONE_HOME = 100;
-    private const int PLAYER_TWO_HOME = 200;
-    private const int PLAYER_THREE_HOME = 300;
-    private const int PLAYER_FOUR_HOME = 400;
+
+    private const int PLAYER_ONE_STARTROW = 100;
+    private const int PLAYER_TWO_STARTROW = 200;
+    private const int PLAYER_THREE_STARTROW = 300;
+    private const int PLAYER_FOUR_STARTROW = 400;
+
+    private const int PLAYER_ONE_HOME_ROW = 1000;
+    private const int PLAYER_TWO_HOME_ROW = 2000;
+    private const int PLAYER_THREE_HOME_ROW = 3000;
+    private const int PLAYER_FOUR_HOME_ROW = 4000;
 
     private const int PLAYER_ONE_START = 0;
     private const int PLAYER_TWO_START = 24;
@@ -59,13 +65,14 @@ public class Board : MonoBehaviour
 
         }
 
-        AssignPlayerToSpaces(1, PLAYER_ONE_HOME, PLAYER_ONE_HOME + NUM_HOME_SPACES);
-        AssignPlayerToSpaces(2, PLAYER_TWO_HOME, PLAYER_TWO_HOME + NUM_HOME_SPACES);
-        AssignPlayerToSpaces(3, PLAYER_THREE_HOME, PLAYER_THREE_HOME + NUM_HOME_SPACES);
-        AssignPlayerToSpaces(4, PLAYER_FOUR_HOME, PLAYER_FOUR_HOME + NUM_HOME_SPACES);
+        AssignPlayerToSpaces(1, PLAYER_ONE_STARTROW, PLAYER_ONE_STARTROW + NUM_HOME_SPACES);
+        AssignPlayerToSpaces(2, PLAYER_TWO_STARTROW, PLAYER_TWO_STARTROW + NUM_HOME_SPACES);
+        AssignPlayerToSpaces(3, PLAYER_THREE_STARTROW, PLAYER_THREE_STARTROW + NUM_HOME_SPACES);
+        AssignPlayerToSpaces(4, PLAYER_FOUR_STARTROW, PLAYER_FOUR_STARTROW + NUM_HOME_SPACES);
 
         //for testing
-        //AssignPlayerToSpace(1, 0);
+        AssignPlayerToSpace(1, 1000);
+        AssignPlayerToSpace(1, 1002);
 
     }
 

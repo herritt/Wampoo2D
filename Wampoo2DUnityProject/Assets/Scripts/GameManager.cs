@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
 
     private float timer = 0;
     private float checkTime = 0.25f;
+    public const int NO_ONE = 0;
 
     public GameObject[] spaceObjs;
     public SpaceManager[] spaces;
@@ -101,21 +102,37 @@ public class GameManager : MonoBehaviour
             }
             else
             {
-                InValidMove(s, c);
+                InvalidMove(s, c);
                 return;
             }
         }
         else if (s.isInHomeRow)
         {
-            //TODO
+            if (c.spaces > 3)
+            {
+                InvalidMove(s, c);
+                return;
+            }
+            else
+            {
+                HandleHomeRow(s, c, player);
+            }
+        }
+        else if (c.isJack)
+        {
+            //TODO - maybe give option to select another marble to swap or to move, and a button to cancel - need to handle selecting start row, home row, same colour, etc.
         }
         else if (c.isFour)
         {
             HandleFourCard(s, c, player);
         }
+        else if (c.isKillerCard)
+        {
+            //TODO after getting other players moving
+        }
         else
         {
-            InValidMove(s, c);
+            InvalidMove(s, c);
             return;
         }
 
@@ -123,7 +140,56 @@ public class GameManager : MonoBehaviour
 
     }
 
-    private void InValidMove(SpaceManager s, Card c)
+    // this is handling moving inside the home row
+    // this is not handling getting into the home row
+    private void HandleHomeRow(SpaceManager s, Card c, int player)
+    {
+        //need to consider if there is a marble already in the spot in the home row
+        int newLocationID = s.locationID + c.spaces;
+
+        SpaceManager newSpace = board.GetSpaceAtLocationID(newLocationID);
+
+        if (newSpace == null)
+        {
+            InvalidMove(s,c);
+            return;
+        }
+
+        if (newSpace.IsControlledByPlayer(player))
+        {
+            InvalidMove(s, c);
+            return;
+        }
+
+        if (!newSpace.isInHomeRow)
+        {
+            InvalidMove(s, c);
+            return;
+        }
+
+        //need to make sure we aren't jumping any marbles
+        for (int i = s.locationID + 1; i < newLocationID; i++)
+        {
+            SpaceManager space = board.GetSpaceAtLocationID(i);
+
+            if (space.controlledByPlayer == player)
+            {
+                InvalidMove(s, c);
+                return;
+            }
+        }
+
+        //should be good to make the move
+        newSpace.controlledByPlayer = player;
+        s.controlledByPlayer = 0;
+
+        deck.DiscardCard(c, user.player);
+
+        EndTurn();
+
+    }
+
+    private void InvalidMove(SpaceManager s, Card c)
     {
         s.UnSelect();
         c.UnSelect();
@@ -133,7 +199,7 @@ public class GameManager : MonoBehaviour
     {
         if (board.HasMarbleInStartPosition(player))
         {
-            InValidMove(s, c);
+            InvalidMove(s, c);
         }
         else
         {
@@ -141,7 +207,10 @@ public class GameManager : MonoBehaviour
             deck.DiscardCard(c, user.player);
             SpaceManager space = board.GetStartSpaceForPlayer(player);
             space.controlledByPlayer = player;
-            
+
+            deck.DiscardCard(c, user.player);
+
+
         }
     }
 
@@ -157,6 +226,7 @@ public class GameManager : MonoBehaviour
 
         board.AssignPlayerToSpace(player, newSpaceLocationId);
 
+        deck.DiscardCard(c, user.player);
 
 
     }
@@ -183,6 +253,8 @@ public class GameManager : MonoBehaviour
 
 
         deck.DiscardCard(c, user.player);
+
+        EndTurn();
     }
 
 
