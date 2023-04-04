@@ -67,7 +67,6 @@ public class UIManager : MonoBehaviour
     {
         foreach (SpaceManager s in gameManager.spaces)
         {
-            Debug.Log(s);
             s.UnSelect();
         }
     

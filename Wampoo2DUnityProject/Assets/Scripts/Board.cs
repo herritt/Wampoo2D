@@ -5,7 +5,7 @@ using UnityEngine;
 public class Board : MonoBehaviour
 {
 
-    private const int NUM_HOME_SPACES = 4;
+    public const int NUM_HOME_SPACES = 4;
 
     private const int PLAYER_ONE_STARTROW = 100;
     private const int PLAYER_TWO_STARTROW = 200;
@@ -239,6 +239,28 @@ public class Board : MonoBehaviour
         else if (player == 4)
         {
             return PLAYER_FOUR_END;
+        }
+
+        return -1;
+    }
+
+    public int GetLocationIdOfStartRow(int player)
+    {
+        if (player == 1)
+        {
+            return PLAYER_ONE_STARTROW;
+        }
+        else if (player == 2)
+        {
+            return PLAYER_TWO_STARTROW;
+        }
+        else if (player == 3)
+        {
+            return PLAYER_THREE_STARTROW;
+        }
+        else if (player == 4)
+        {
+            return PLAYER_FOUR_STARTROW;
         }
 
         return -1;

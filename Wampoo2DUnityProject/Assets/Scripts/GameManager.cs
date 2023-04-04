@@ -45,7 +45,6 @@ public class GameManager : MonoBehaviour
 
     }
 
-
     // Update is called once per frame
     void Update()
     {
@@ -164,6 +163,7 @@ public class GameManager : MonoBehaviour
 
     }
 
+    // need to look at this because I have a similar method in the board class
     public void AssignPlayerToSpace(SpaceManager s, Card c, int player)
     {
         int newLocationID = s.locationID + c.spaces;
@@ -252,8 +252,6 @@ public class GameManager : MonoBehaviour
 
     }
 
-
-
     // space is a normal space not in the home row or in the starter row
     // card is just a movement 
     private void HandleNonSpecialMovement(SpaceManager s, Card c, int player)
@@ -262,9 +260,6 @@ public class GameManager : MonoBehaviour
         int currentLocationId = s.locationID;
         int newSpaceLocationId = currentLocationId + c.spaces;
 
-
-
-        //TODO: handle passing end and getting into home row
         if (EnteringHomeRow(s,c,player))
         {
             int endLocationId = board.GetLocationIdOfEndPosition(player);
@@ -292,9 +287,18 @@ public class GameManager : MonoBehaviour
         }
 
         //set it back to no control because we are moving out of it
-        s.controlledByPlayer = 0;
+        s.controlledByPlayer = NO_ONE;
 
         //TODO: handle knocking other player off
+        SpaceManager newSpace = board.GetSpaceAtLocationID(newSpaceLocationId);
+
+        if (newSpace.controlledByPlayer > 0)
+        {
+            //send the current player back to home
+            SendPlayerBackToStartRow(newSpace.controlledByPlayer);
+        }
+
+
         //TODO: handle blockers (start marbles)
         //TODO: update for AI players
         board.AssignPlayerToSpace(player, newSpaceLocationId);
@@ -314,6 +318,26 @@ public class GameManager : MonoBehaviour
         }
 
         return false;
+
+    }
+
+    // assumes the space that the player was on will be reset to the new owner outside of this method
+    private void SendPlayerBackToStartRow(int player)
+    {
+        int startRow = board.GetLocationIdOfStartRow(player);
+
+        for (int i = startRow; i < startRow + 4; i++)
+        {
+            SpaceManager space = board.GetSpaceAtLocationID(i);
+
+            //find the first empty space and fill it
+            if (space.controlledByPlayer != player)
+            {
+                space.controlledByPlayer = player;
+                return;
+            }
+
+        }
 
     }
 
