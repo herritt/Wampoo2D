@@ -27,6 +27,8 @@ public class Board : MonoBehaviour
     private const int PLAYER_THREE_END = 44;
     private const int PLAYER_FOUR_END = 68;
 
+    public const int LOCATION_ID_OF_LAST_SPACE = 95;
+
     public Color color_p1 = Color.red;
     public Color color_p2 = Color.green;
     public Color color_p3 = Color.blue;
@@ -75,9 +77,19 @@ public class Board : MonoBehaviour
         AssignPlayerToSpaces(4, PLAYER_FOUR_STARTROW, PLAYER_FOUR_STARTROW + NUM_HOME_SPACES);
 
         //for testing
-        AssignPlayerToSpace(1, 90);
+        AssignPlayerToSpace(1, 17);
+        AssignPlayerToSpace(2, 19);
+        AssignPlayerToSpace(2, 22);
+        AssignPlayerToSpace(2, 24);
+
         AssignPlayerToSpace(1, 1000);
 
+        AssignPlayerToSpace(0, 102);
+        AssignPlayerToSpace(0, 100);
+
+        AssignPlayerToSpace(0, 202);
+        AssignPlayerToSpace(0, 201);
+        AssignPlayerToSpace(0, 200);
     }
 
     public void AssignPlayerToSpaces(int player, int startID, int stopID)

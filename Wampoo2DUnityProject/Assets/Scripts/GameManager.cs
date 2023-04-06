@@ -132,7 +132,7 @@ public class GameManager : MonoBehaviour
         }
         else if (c.isKillerCard)
         {
-            //TODO after getting other players moving
+            HandleKillerCard(s, c, player);
         }
         else
         {
@@ -144,13 +144,77 @@ public class GameManager : MonoBehaviour
 
     }
 
+    private void HandleKillerCard(SpaceManager s, Card c, int player)
+    {
+        int start = s.locationID;
+        int finish = c.spaces + start;
+
+        // edge cases
+        if (EnteringHomeRow(s, c, player))
+        {
+
+            if (CanEnterHomeRow(s,c,player))
+            {
+                // we still need to remove the marbles between current space and the players end location
+                for (int i = start; i <= board.GetLocationIdOfEndPosition(player); i++)
+                {
+
+                    SendPlayerAtSpaceLocationIDBackToStartRow(i);
+
+                }
+                HandleNonSpecialMovement(s, c, player);
+                return;
+            }
+            else
+            {
+                InvalidMove(s, c);
+                return;
+            }
+        }
+        else if (finish < start)
+        {
+            // player is passing by the last space before the location IDs start over
+
+            for (int i = start; i <= Board.LOCATION_ID_OF_LAST_SPACE; i++)
+            {
+                SendPlayerAtSpaceLocationIDBackToStartRow(i);
+            }
+
+        }
+        else
+        {
+            for (int i = start; i <= finish; i++)
+            {
+                SendPlayerAtSpaceLocationIDBackToStartRow(i);
+            }
+        }
+
+        //make move
+        AssignPlayerToSpace(s, c, player);
+
+    }
+
+    private void SendPlayerAtSpaceLocationIDBackToStartRow(int locationID)
+    {
+        SpaceManager space = board.GetSpaceAtLocationID(locationID);
+        int playerToRemove = space.controlledByPlayer;
+
+        if (playerToRemove > 0)
+        {
+            SendPlayerBackToStartRow(playerToRemove);
+
+        }
+        space.controlledByPlayer = NO_ONE;
+
+    }
+
     // this is handling moving inside the home row
     // this is not handling getting into the home row
     private bool HandleHomeRow(SpaceManager s, Card c, int player)
     {
 
         //need to consider if there is a marble already in the spot in the home row
-        if (CanMakeMoveinHomeRow(s.locationID, c.spaces, player))
+        if (CanMakeMoveInHomeRow(s.locationID, c.spaces, player))
         {
             AssignPlayerToSpace(s, c, player);
 
@@ -175,9 +239,11 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public bool CanMakeMoveinHomeRow(int locationId, int spaces, int player)
+    // checking if move inside home row is possible starting from home location
+    public bool CanMakeMoveInHomeRow(int locationID, int spaces, int player)
     {
-        int newLocationID = locationId + spaces;
+
+        int newLocationID = locationID + spaces;
 
         SpaceManager newSpace = board.GetSpaceAtLocationID(newLocationID);
 
@@ -197,7 +263,7 @@ public class GameManager : MonoBehaviour
         }
 
         //need to make sure we aren't jumping any marbles
-        for (int i = locationId + 1; i < newLocationID; i++)
+        for (int i = locationID + 1; i < newLocationID; i++)
         {
             SpaceManager space = board.GetSpaceAtLocationID(i);
 
@@ -235,6 +301,33 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public bool CanMakeMoveInHomeRow(SpaceManager s, Card c, int player)
+    {
+        int currentLocationId = s.locationID;
+        int newSpaceLocationId = currentLocationId + c.spaces;
+
+        if (EnteringHomeRow(s, c, player))
+        {
+            int endLocationId = board.GetLocationIdOfEndPosition(player);
+
+            // subtract 1 because home row is 0 indexed
+            int spacesToMove = newSpaceLocationId - endLocationId - 1;
+
+            int homeLocation = board.GetLocationIdOfHomePosition(player);
+
+            if (!CanMakeMoveInHomeRow(homeLocation, spacesToMove, player))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private void HandleFourCard(SpaceManager s, Card c, int player)
     {
         s.controlledByPlayer = 0;
@@ -259,50 +352,31 @@ public class GameManager : MonoBehaviour
 
         int currentLocationId = s.locationID;
         int newSpaceLocationId = currentLocationId + c.spaces;
+        int endLocationId = board.GetLocationIdOfEndPosition(player);
+        int spacesToMove = newSpaceLocationId - endLocationId - 1;
 
         if (EnteringHomeRow(s, c, player))
         {
-            int endLocationId = board.GetLocationIdOfEndPosition(player);
 
-            // subtract 1 because home row is 0 indexed
-            int spacesToMove = newSpaceLocationId - endLocationId - 1;
-
-            int homeLocation = board.GetLocationIdOfHomePosition(player);
-
-            if (!CanMakeMoveinHomeRow(homeLocation, spacesToMove, player))
+            if (CanEnterHomeRow(s,c,player))
             {
-                return;
+                newSpaceLocationId = board.GetLocationIdOfHomePosition(player) + spacesToMove;
             }
             else
             {
-                SpaceManager homeStartSpace = board.GetSpaceAtLocationID(homeLocation);
-
-                if (homeStartSpace.IsControlledByPlayer(player))
-                {
-                    return;
-                }
-
-                newSpaceLocationId = homeLocation + spacesToMove;
+                return;
             }
+
         }
         else if (IsMoveBlockedByStartingMarble(s, c, player))
         {
-            Debug.Log("Blocked by Start Marble");
             return;
         }
-
 
         //set it back to no control because we are moving out of it
         s.controlledByPlayer = NO_ONE;
 
-        SpaceManager newSpace = board.GetSpaceAtLocationID(newSpaceLocationId);
-
-        if (newSpace.controlledByPlayer > 0)
-        {
-            //send the current player back to home
-            SendPlayerBackToStartRow(newSpace.controlledByPlayer);
-        }
-
+        SendPlayerAtSpaceLocationIDBackToStartRow(newSpaceLocationId);
 
         //TODO: update for AI players
         board.AssignPlayerToSpace(player, newSpaceLocationId);
@@ -310,6 +384,20 @@ public class GameManager : MonoBehaviour
         deck.DiscardCard(c, user.player);
 
         EndTurn();
+    }
+
+    private bool CanEnterHomeRow(SpaceManager s, Card c, int player)
+    {
+        int homeLocation = board.GetLocationIdOfHomePosition(player);
+
+        SpaceManager homeStartSpace = board.GetSpaceAtLocationID(homeLocation);
+
+        if (homeStartSpace.IsControlledByPlayer(player))
+        {
+            return false;
+        }
+
+        return CanMakeMoveInHomeRow(s, c, player);
     }
 
     private bool IsMoveBlockedByStartingMarble(SpaceManager s, Card c, int player)
