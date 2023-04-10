@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
 
     private float timer = 0;
     private float checkTime = 0.25f;
-    public const int NO_ONE = 0;
+
 
     public GameObject[] spaceObjs;
     public SpaceManager[] spaces;
@@ -107,20 +107,8 @@ public class GameManager : MonoBehaviour
         }
         else if (s.isInHomeRow)
         {
-            if (c.spaces > 3)
-            {
-                InvalidMove(s, c);
-                return;
-            }
-            else
-            {
-                bool validMove = HandleHomeRow(s, c, player);
-
-                if (!validMove)
-                {
-                    InvalidMove(s, c);
-                }
-            }
+            HandleHomeRow(s, c, player);
+            return;
         }
         else if (c.isJack)
         {
@@ -133,6 +121,11 @@ public class GameManager : MonoBehaviour
         else if (c.isKillerCard)
         {
             HandleKillerCard(s, c, player);
+        }
+        else if (c.isSpecialCard)
+        {
+            //would be King or Ace not used to bring marble out of Start row so we can just handle like a non special move
+            HandleNonSpecialMovement(s, c, player);
         }
         else
         {
@@ -159,7 +152,7 @@ public class GameManager : MonoBehaviour
                 for (int i = start; i <= board.GetLocationIdOfEndPosition(player); i++)
                 {
 
-                    SendPlayerAtSpaceLocationIDBackToStartRow(i);
+                    board.SendPlayerAtSpaceLocationIDBackToStartRow(i);
 
                 }
                 HandleNonSpecialMovement(s, c, player);
@@ -177,7 +170,7 @@ public class GameManager : MonoBehaviour
 
             for (int i = start; i <= Board.LOCATION_ID_OF_LAST_SPACE; i++)
             {
-                SendPlayerAtSpaceLocationIDBackToStartRow(i);
+                board.SendPlayerAtSpaceLocationIDBackToStartRow(i);
             }
 
         }
@@ -185,57 +178,44 @@ public class GameManager : MonoBehaviour
         {
             for (int i = start; i <= finish; i++)
             {
-                SendPlayerAtSpaceLocationIDBackToStartRow(i);
+                board.SendPlayerAtSpaceLocationIDBackToStartRow(i);
             }
         }
 
         //make move
-        AssignPlayerToSpace(s, c, player);
+        MovePlayerFromSpaceUsingCard(s, c, player);
 
     }
 
-    private void SendPlayerAtSpaceLocationIDBackToStartRow(int locationID)
-    {
-        SpaceManager space = board.GetSpaceAtLocationID(locationID);
-        int playerToRemove = space.controlledByPlayer;
 
-        if (playerToRemove > 0)
-        {
-            SendPlayerBackToStartRow(playerToRemove);
-
-        }
-        space.controlledByPlayer = NO_ONE;
-
-    }
 
     // this is handling moving inside the home row
     // this is not handling getting into the home row
-    private bool HandleHomeRow(SpaceManager s, Card c, int player)
+    private void HandleHomeRow(SpaceManager s, Card c, int player)
     {
-
         //need to consider if there is a marble already in the spot in the home row
         if (CanMakeMoveInHomeRow(s.locationID, c.spaces, player))
         {
-            AssignPlayerToSpace(s, c, player);
+            MovePlayerFromSpaceUsingCard(s, c, player);
 
             deck.DiscardCard(c, user.player);
-            return true;
 
         }
-
-        return false;
+        else
+        {
+            InvalidMove(s, c);
+        }
 
     }
 
-    // need to look at this because I have a similar method in the board class
-    public void AssignPlayerToSpace(SpaceManager s, Card c, int player)
+    public void MovePlayerFromSpaceUsingCard(SpaceManager s, Card c, int player)
     {
         int newLocationID = s.locationID + c.spaces;
 
         SpaceManager newSpace = board.GetSpaceAtLocationID(newLocationID);
 
         newSpace.controlledByPlayer = player;
-        s.controlledByPlayer = 0;
+        s.controlledByPlayer = Board.NO_ONE;
 
     }
 
@@ -291,7 +271,6 @@ public class GameManager : MonoBehaviour
         else
         {
             s.controlledByPlayer = 0;
-            deck.DiscardCard(c, user.player);
             SpaceManager space = board.GetStartSpaceForPlayer(player);
             space.controlledByPlayer = player;
 
@@ -334,10 +313,14 @@ public class GameManager : MonoBehaviour
 
         int currentLocationId = s.locationID;
         int newSpaceLocationId = currentLocationId - 4;
-        //TODO: Handle moving backwards from 0 position
 
-        //TODO: handle knocking other player off
+        // handle moving backwards beyond the 0 space
+        if (newSpaceLocationId < 0)
+        {
+            newSpaceLocationId += Board.LOCATION_ID_OF_LAST_SPACE + 1;
+        }
 
+        //handle knocking off player
         board.AssignPlayerToSpace(player, newSpaceLocationId);
 
         deck.DiscardCard(c, user.player);
@@ -373,13 +356,9 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        //set it back to no control because we are moving out of it
-        s.controlledByPlayer = NO_ONE;
-
-        SendPlayerAtSpaceLocationIDBackToStartRow(newSpaceLocationId);
-
         //TODO: update for AI players
         board.AssignPlayerToSpace(player, newSpaceLocationId);
+        s.controlledByPlayer = Board.NO_ONE;
 
         deck.DiscardCard(c, user.player);
 
@@ -402,6 +381,7 @@ public class GameManager : MonoBehaviour
 
     private bool IsMoveBlockedByStartingMarble(SpaceManager s, Card c, int player)
     {
+        if (c.isJoker) return false;
 
         //loop through player 1 to 4
         for (int i = 1; i <= 4; i++)
@@ -453,25 +433,6 @@ public class GameManager : MonoBehaviour
 
     }
 
-    // assumes the space that the player was on will be reset to the new owner outside of this method
-    private void SendPlayerBackToStartRow(int player)
-    {
-        int startRow = board.GetLocationIdOfStartRow(player);
-
-        for (int i = startRow; i < startRow + 4; i++)
-        {
-            SpaceManager space = board.GetSpaceAtLocationID(i);
-
-            //find the first empty space and fill it
-            if (space.controlledByPlayer != player)
-            {
-                space.controlledByPlayer = player;
-                return;
-            }
-
-        }
-
-    }
 
     public void EndTurn()
     {

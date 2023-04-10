@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Board : MonoBehaviour
 {
-
+    public const int NO_ONE = 0;
     public const int NUM_HOME_SPACES = 4;
 
     private const int PLAYER_ONE_STARTROW = 100;
@@ -71,16 +71,16 @@ public class Board : MonoBehaviour
 
         }
 
-        AssignPlayerToSpaces(1, PLAYER_ONE_STARTROW, PLAYER_ONE_STARTROW + NUM_HOME_SPACES);
-        AssignPlayerToSpaces(2, PLAYER_TWO_STARTROW, PLAYER_TWO_STARTROW + NUM_HOME_SPACES);
-        AssignPlayerToSpaces(3, PLAYER_THREE_STARTROW, PLAYER_THREE_STARTROW + NUM_HOME_SPACES);
-        AssignPlayerToSpaces(4, PLAYER_FOUR_STARTROW, PLAYER_FOUR_STARTROW + NUM_HOME_SPACES);
+        AssignPlayerToSpaces(1, PLAYER_ONE_STARTROW, PLAYER_ONE_STARTROW + NUM_HOME_SPACES -1);
+        AssignPlayerToSpaces(2, PLAYER_TWO_STARTROW, PLAYER_TWO_STARTROW + NUM_HOME_SPACES -1);
+        AssignPlayerToSpaces(3, PLAYER_THREE_STARTROW, PLAYER_THREE_STARTROW + NUM_HOME_SPACES -1);
+        AssignPlayerToSpaces(4, PLAYER_FOUR_STARTROW, PLAYER_FOUR_STARTROW + NUM_HOME_SPACES -1);
 
         //for testing
         AssignPlayerToSpace(1, 17);
         AssignPlayerToSpace(2, 19);
         AssignPlayerToSpace(2, 22);
-        AssignPlayerToSpace(2, 24);
+ 
 
         AssignPlayerToSpace(1, 1000);
 
@@ -90,6 +90,10 @@ public class Board : MonoBehaviour
         AssignPlayerToSpace(0, 202);
         AssignPlayerToSpace(0, 201);
         AssignPlayerToSpace(0, 200);
+
+        AssignPlayerToSpace(1, 0);
+
+        AssignPlayerToSpace(2, 92);
     }
 
     public void AssignPlayerToSpaces(int player, int startID, int stopID)
@@ -103,16 +107,61 @@ public class Board : MonoBehaviour
     }
 
     // assigns the player to given space
+    // if someone is already there, it sends them back to 
+    // the home row
     public void AssignPlayerToSpace(int player, int locationID)
     {
-        for (int i = 0; i < spaces.Length; i++)
+        SpaceManager s = GetSpaceAtLocationID(locationID);
+
+        if (s == null)
         {
-            SpaceManager spaceManager = spaceManagers[i];
-            if (spaceManager.locationID == locationID)
-            {
-                spaceManager.controlledByPlayer = player;
-            }
+            Debug.Log("was null " + locationID);
+            return;
         }
+        int currentPlayer = s.controlledByPlayer;
+
+        if (currentPlayer != NO_ONE)
+        {
+            SendPlayerBackToStartRow(currentPlayer);
+
+        }
+
+        s.controlledByPlayer = player;
+
+    }
+
+    public void SendPlayerAtSpaceLocationIDBackToStartRow(int locationID)
+    {
+        SpaceManager space = GetSpaceAtLocationID(locationID);
+        int playerToRemove = space.controlledByPlayer;
+
+        if (playerToRemove > 0)
+        {
+            SendPlayerBackToStartRow(playerToRemove);
+
+        }
+        space.controlledByPlayer = NO_ONE;
+
+    }
+
+    // assumes the space that the player was on will be reset to the new owner outside of this method
+    private void SendPlayerBackToStartRow(int player)
+    {
+        int startRow = GetLocationIdOfStartRow(player);
+
+        for (int i = startRow; i < startRow + 4; i++)
+        {
+            SpaceManager space = GetSpaceAtLocationID(i);
+
+            //find the first empty space and fill it
+            if (space.controlledByPlayer != player)
+            {
+                space.controlledByPlayer = player;
+                return;
+            }
+
+        }
+
     }
 
     public void UpdateSpacesColours()
