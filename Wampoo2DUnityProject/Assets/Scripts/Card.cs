@@ -60,7 +60,6 @@ public class Card : MonoBehaviour,IPointerClickHandler
 
     public void Selected()
     {
-
         isSelected = true;
         gameObject.transform.localScale = selectedScale;
     }

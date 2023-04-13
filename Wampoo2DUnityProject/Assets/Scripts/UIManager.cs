@@ -8,12 +8,16 @@ public class UIManager : MonoBehaviour
 {
     private float popUpTime = 4f;
     private GameManager gameManager;
+    private bool jackSelected = false;
+
+    // used to store selected spaces for Jack swap
+    public List<SpaceManager> selectedSpaces;
 
     // Start is called before the first frame update
     void Start()
     {
         gameManager = gameObject.GetComponent<GameManager>();
-        
+        selectedSpaces = new List<SpaceManager>();
     }
 
     // Update is called once per frame
@@ -24,13 +28,21 @@ public class UIManager : MonoBehaviour
 
     public void ShowText(string message)
     {
+        TMP_Text text = GameObject.FindGameObjectWithTag("TextPopUp").GetComponent<TMP_Text>();
+
+        text.text = message;
+        text.enabled = true;
+    }
+
+    public void ShowTextPopUp(string message)
+    {
         StartCoroutine(ShowMessage(message, popUpTime));
 
     }
 
     public void TellUserItsTheirTurn(int player)
     {
-        ShowText("Your Turn!!");
+        ShowTextPopUp("Your Turn!!");
     }
 
     IEnumerator ShowMessage(string message, float delay)
@@ -58,6 +70,15 @@ public class UIManager : MonoBehaviour
             }
 
             card.Selected();
+
+            jackSelected = card.isJack;
+
+            if (jackSelected && selectedSpaces.Count == 2)
+            {
+                gameManager.HandleJackSwap(selectedSpaces);
+
+            }
+
         }
 
         TryMove();
@@ -65,20 +86,39 @@ public class UIManager : MonoBehaviour
 
     public void OnMarbleSelected(GameObject marbleObject)
     {
-        foreach (SpaceManager s in gameManager.spaces)
-        {
-            s.UnSelect();
-        }
-    
-
         SpaceManager space = marbleObject.GetComponent<SpaceManager>();
 
-        if (space.IsControlledByUser())
+        // we want to handle the Jack case
+        if (jackSelected)
         {
-            space.Selected();
-        }
+            selectedSpaces.Add(space);
 
-        TryMove();
+            space.Selected();
+
+            if (selectedSpaces.Count == 2)
+            {
+                gameManager.HandleJackSwap(selectedSpaces);
+                selectedSpaces.Clear();
+            }
+
+        }
+        else
+        {
+            selectedSpaces.Clear();
+
+            foreach (SpaceManager s in gameManager.spaces)
+            {
+                s.UnSelect();
+            }
+
+            if (space.IsControlledByUser())
+            {
+                space.Selected();
+            }
+
+            TryMove();
+        }
+    
     }
 
     public void TryMove()
@@ -94,8 +134,6 @@ public class UIManager : MonoBehaviour
                     if (c.isSelected)
                     {
                         gameManager.PlayMove(s, c, 1);
-                        c.UnSelect();
-                        s.UnSelect();
                         return;
                     }
                 }

@@ -16,15 +16,19 @@ public class GameManager : MonoBehaviour
     public Player[] players;
     private DeckOfCards deck;
     public GameObject boardObj;
-    private Board board;
+    public Board board;
 
     public User user;
     private UIManager hud;
+
+    
 
     // Start is called before the first frame update
     void Start()
     {
         spaces = new SpaceManager[spaceObjs.Length];
+        
+
         for (int i = 0; i < spaceObjs.Length; i++)
         {
             spaces[i] = spaceObjs[i].GetComponent<SpaceManager>();
@@ -88,7 +92,6 @@ public class GameManager : MonoBehaviour
 
     public void PlayMove(SpaceManager s, Card c, int player)
     {
-        //check to see if it is just a straight up movement
         if (!s.isInStartRow && !s.isInHomeRow && !c.isSpecialCard)
         {
             HandleNonSpecialMovement(s, c, player);
@@ -108,11 +111,10 @@ public class GameManager : MonoBehaviour
         else if (s.isInHomeRow)
         {
             HandleHomeRow(s, c, player);
-            return;
         }
         else if (c.isJack)
         {
-            //TODO - maybe give option to select another marble to swap or to move, and a button to cancel - need to handle selecting start row, home row, same colour, etc.
+            HandleJack(s, c, player);
         }
         else if (c.isFour)
         {
@@ -133,8 +135,89 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        c.UnSelect();
+        s.UnSelect();
+
         EndTurn();
 
+    }
+
+    // this is a case where we likely only have one space selected and the jack has been selected, we need to give the user some instructions on how to do the swap or allow them to just do the move
+    private void HandleJack(SpaceManager s, Card c, int player)
+    {
+        //TODO - maybe give option to select another marble to swap or to move, and a button to cancel - need to handle selecting start row, home row, same colour, etc.
+        hud.ShowText("Select 2 marbles to Swap");
+
+    }
+
+    // just do a move with the jack
+    public void HandleJackMove()
+    {
+        //TODO
+    }
+
+    // jack is selected and there are 2 spaces selected and we are going to execute the swap
+    public void HandleJackSwap(List<SpaceManager> selectedSpaces)
+    {
+        SpaceManager firstSpace = selectedSpaces[0];
+        SpaceManager secondSpace = selectedSpaces[1];
+
+        if (firstSpace == null || secondSpace == null) return;
+
+        if (firstSpace.controlledByPlayer == secondSpace.controlledByPlayer)
+        {
+            Debug.Log("Can't swap two marbles of same colour!" + firstSpace.controlledByPlayer + " and " + secondSpace.controlledByPlayer);
+
+        }
+        else if (firstSpace.isInStartRow || secondSpace.isInStartRow)
+        {
+            Debug.Log("Can't swap marbles in the start row");
+        }
+        
+        else if (firstSpace.isInHomeRow || secondSpace.isInHomeRow)
+        {
+            Debug.Log("Can't swap with a marble in the home row.");
+        }
+        else if (firstSpace.controlledByPlayer == Board.NO_ONE || secondSpace.controlledByPlayer == Board.NO_ONE)
+        {
+            Debug.Log("Must select a marble in order to swap - not sure if this use case is possible");
+        }
+        else if (firstSpace.isStarterHole && secondSpace.isStarterHole)
+        {
+            Debug.Log("Can't swap with a marble in a starter hole");
+        }
+        else if (firstSpace.isStarterHole && firstSpace.controlledByPlayer != user.player.playerNumber)
+        {
+            Debug.Log("Can't swap with an opponent's marble in the start hole");
+        }
+        else if (secondSpace.isStarterHole && secondSpace.controlledByPlayer != user.player.playerNumber)
+        {
+            Debug.Log("Can't swap with an opponent's marble in the start hole");
+        }
+        else
+        {
+            //do swap
+            int tempPlayer = secondSpace.controlledByPlayer;
+            secondSpace.controlledByPlayer = firstSpace.controlledByPlayer;
+            firstSpace.controlledByPlayer = tempPlayer;
+
+        }
+
+        firstSpace.isSelected = false;
+        secondSpace.isSelected = false;
+
+        foreach (Card c in user.player.playersHand)
+        {
+            if (c.isSelected)
+            {
+                c.UnSelect();
+            }
+        }
+
+        foreach (SpaceManager space in selectedSpaces)
+        {
+            space.UnSelect();
+        }
     }
 
     private void HandleKillerCard(SpaceManager s, Card c, int player)
@@ -187,6 +270,7 @@ public class GameManager : MonoBehaviour
 
     }
 
+    
 
 
     // this is handling moving inside the home row
@@ -436,6 +520,5 @@ public class GameManager : MonoBehaviour
 
     public void EndTurn()
     {
-
     }
 }
